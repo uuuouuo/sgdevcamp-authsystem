@@ -1,11 +1,12 @@
-package com.stdevcamp.authsystembackend.model.entity;
+package com.stdevcamp.authsystembackend.model;
 
-import com.stdevcamp.authsystembackend.model.Role;
 import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @Builder
 public class User {
 
@@ -23,4 +24,12 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    public User update(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
 }
