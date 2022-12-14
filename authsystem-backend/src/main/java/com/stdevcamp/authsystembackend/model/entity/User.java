@@ -1,5 +1,7 @@
-package com.stdevcamp.authsystembackend.model;
+package com.stdevcamp.authsystembackend.model.entity;
 
+import com.stdevcamp.authsystembackend.model.Role;
+import com.stdevcamp.authsystembackend.model.dto.JoinRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,12 +34,10 @@ public class User {
         this.role = role;
     }
 
-    public User update(String name) {
-        this.name = name;
-        return this;
+    public void createUser(JoinRequest request, String password) {
+        this.email = request.getEmail();
+        this.password = password;
+        this.role = Role.USER;
     }
 
-    public String getRoleKey() {
-        return this.role.getKey();
-    }
 }

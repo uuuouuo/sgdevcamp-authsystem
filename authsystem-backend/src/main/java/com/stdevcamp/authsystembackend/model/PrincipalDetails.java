@@ -1,5 +1,6 @@
 package com.stdevcamp.authsystembackend.model;
 
+import com.stdevcamp.authsystembackend.model.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

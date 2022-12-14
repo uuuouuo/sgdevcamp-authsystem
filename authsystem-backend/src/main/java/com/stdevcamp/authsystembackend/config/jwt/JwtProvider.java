@@ -2,7 +2,7 @@ package com.stdevcamp.authsystembackend.config.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.stdevcamp.authsystembackend.model.User;
+import com.stdevcamp.authsystembackend.model.entity.User;
 import com.stdevcamp.authsystembackend.repository.UserRepository;
 import com.stdevcamp.authsystembackend.service.PrincipalDetailService;
 import lombok.RequiredArgsConstructor;

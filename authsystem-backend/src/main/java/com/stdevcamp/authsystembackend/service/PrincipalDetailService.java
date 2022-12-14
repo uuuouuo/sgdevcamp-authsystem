@@ -1,7 +1,7 @@
 package com.stdevcamp.authsystembackend.service;
 
 import com.stdevcamp.authsystembackend.model.PrincipalDetails;
-import com.stdevcamp.authsystembackend.model.User;
+import com.stdevcamp.authsystembackend.model.entity.User;
 import com.stdevcamp.authsystembackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
