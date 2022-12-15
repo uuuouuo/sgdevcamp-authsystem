@@ -16,4 +16,11 @@ public class IndexController {
     public String index() {
         return "index";
     }
+
+    @GetMapping("/management")
+    public String getUserAll() {
+        System.out.println("Controller !!!!!!!!!!!!!!!!");
+        return "management";
+    }
+
 }

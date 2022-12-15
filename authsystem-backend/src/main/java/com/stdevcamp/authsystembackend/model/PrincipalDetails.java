@@ -1,17 +1,16 @@
 package com.stdevcamp.authsystembackend.model;
 
 import com.stdevcamp.authsystembackend.model.entity.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@RequiredArgsConstructor
 public class PrincipalDetails implements UserDetails {
 
-    private User user;
-
-    public PrincipalDetails(User user) {
-    }
+    private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

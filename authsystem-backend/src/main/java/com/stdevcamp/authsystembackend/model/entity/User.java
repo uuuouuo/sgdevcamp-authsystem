@@ -1,12 +1,12 @@
 package com.stdevcamp.authsystembackend.model.entity;
 
-import com.stdevcamp.authsystembackend.model.Role;
 import com.stdevcamp.authsystembackend.model.dto.JoinRequest;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Entity
 @Getter
@@ -17,27 +17,28 @@ public class User {
     @Column(name = "USER_ID")
     private String email;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private Role role;
 
-    @Builder
-    public User(String name, String email, String picture, Role role) {
-        this.name = name;
-        this.email = email;
-        this.role = role;
-    }
+//    @Builder
+//    public User(String name, String email, String picture, Role role) {
+//        this.name = name;
+//        this.email = email;
+//        this.role = role;
+//    }
 
     public void createUser(JoinRequest request, String password) {
         this.email = request.getEmail();
+        this.name = request.getName();
         this.password = password;
-        this.role = Role.USER;
+//        this.role = Role.USER;
     }
 
 }

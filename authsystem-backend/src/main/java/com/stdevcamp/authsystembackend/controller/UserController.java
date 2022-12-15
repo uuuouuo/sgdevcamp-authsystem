@@ -22,16 +22,17 @@ public class UserController {
 
     @PostMapping(value = "/join")
     public void  createUser(@RequestBody JoinRequest request) {
-        System.out.println("회원가입 완료");
+        System.out.println("======>>> Join Success !");
+        // 같은 이메일 있는지 확인 필요
         userService.join(request);
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequest request, HttpServletResponse http) {
         String jwtToken = userService.login(request);
 
-        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
-
+        http.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
+//        System.out.println("======>>> JWT ::: " + jwtToken);
         return ResponseEntity.ok().body(jwtToken);
     }
 
@@ -46,5 +47,11 @@ public class UserController {
         return ResponseEntity.ok().body("JWT 재생성 완료");
 
     }
+
+//    @GetMapping("/management")
+//    public ResponseEntity<List<String>> getUserAll() {
+//        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+//    }
+
 
 }

@@ -2,6 +2,7 @@ package com.stdevcamp.authsystembackend.config.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.stdevcamp.authsystembackend.model.entity.User;
 import com.stdevcamp.authsystembackend.repository.UserRepository;
 import com.stdevcamp.authsystembackend.service.PrincipalDetailService;
@@ -42,21 +43,21 @@ public class JwtProvider {
     public Authentication getAuthentication(String jwtToken) {
         UserDetails principalDetails
                 = principalDetailService.loadUserByUsername(this.getUserId(jwtToken));
-
-        return new UsernamePasswordAuthenticationToken(principalDetails, jwtToken);
-        }
+        return new UsernamePasswordAuthenticationToken(principalDetails, "", principalDetails.getAuthorities());
+    }
 
     // JWT 토큰에서 회원 정보 추출
     public String getUserId(String jwtToken) {
         String id = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
                 .build().verify(jwtToken).getClaim("id").asString();
-
+//        System.out.println("=========>>> id "+id);
         return id;
     }
 
     // 토큰의 유효성 + 만료일자 확인
     public boolean validateToken(String jwtToken) {
-        return JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
-                .build().verify(jwtToken).getExpiresAt().before(new Date());
+        DecodedJWT verify = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
+                    .build().verify(jwtToken);
+        return verify.getExpiresAt().after(new Date());
     }
 }

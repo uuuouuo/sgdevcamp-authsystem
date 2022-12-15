@@ -23,29 +23,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // Request의 Header에서 token 값을 가져옴 => "JWT" : "TOKEN값"
-        final String jwt = request.getHeader("JWT");
-
-        if(jwt == null) {
-            request.setAttribute("exception", ErrorCode.NON_LOGIN.getCode());
-            filterChain.doFilter(request,response);
-        }
-
-        if(jwtProvider.validateToken(jwt)) {
-            request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.getCode());
-            filterChain.doFilter(request,response);
-        }
-
-        // 토큰이 유효한 경우 유저 정보 가져오기
-        String userId = jwtProvider.getUserId(jwt);
+        final String header = request.getHeader("JWT");
+        System.out.println("======> jwtToken : "+header);
 
         try {
-            Authentication authentication = jwtProvider.getAuthentication(userId); // id 인증
-            SecurityContextHolder.getContext().setAuthentication(authentication); //세션에서 계속 사용하기 위해 securityContext에 Authentication 등록
-            filterChain.doFilter(request, response);
+            if(header != null && header.startsWith("Bearer ")
+                    && jwtProvider.validateToken(header.replace("Bearer ", ""))) {
+                System.out.println("=========>>> Auth Success !!!");
+                String jwtToken = header.replace("Bearer ", "");
+                // 토큰이 유효한 경우 유저 정보 가져오기
+                Authentication authentication = jwtProvider.getAuthentication(jwtToken); // id 인증
+                SecurityContextHolder.getContext().setAuthentication(authentication); //세션에서 계속 사용하기 위해 securityContext에 Authentication 등록
+            }
         } catch(Exception e) {
             e.printStackTrace();
-            request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getCode());
-            filterChain.doFilter(request, response);
+            System.out.println("=========>>> Auth Fail ...");
+            if(header == null) {
+                request.setAttribute("exception", ErrorCode.NON_LOGIN.getCode());
+                System.out.println("=========>>> null");
+            } else if(!jwtProvider.validateToken(header.replace("Bearer ", ""))) {
+                request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.getCode());
+                System.out.println("=========>>> expired");
+            } else {
+                e.printStackTrace();
+                request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getCode());
+                System.out.println("=========>>> invalid");
+            }
         }
+            filterChain.doFilter(request, response);
     }
 }

@@ -28,7 +28,6 @@ public class UserService {
 
         User user = new User();
         user.createUser(request, encPassword);
-
         userRepository.save(user);
     }
 
