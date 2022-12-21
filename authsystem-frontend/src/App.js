@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import "./App.css";
+import { getSuggestedQuery } from "@testing-library/react";
 
 function App() {
   const [mode, setMode] = useState("LOGIN");
@@ -10,6 +11,12 @@ function App() {
   const [name, setName] = useState("");
   const [cookie, setCookie] = useCookies(["token"]);
   const config = { "Content-Type": "application/json" };
+  const [users, setUsers] = useState([
+    {
+      id: "",
+      name: "",
+    },
+  ]);
 
   /* 로그인 */
   const onClickLogin = (event) => {
@@ -22,7 +29,8 @@ function App() {
       .then((response) => {
         console.log("response.data", response.data);
         setCookie("token", response.data);
-        setMode('READ')
+        setMode("READ");
+        getUser();
       })
       .catch((error) => {
         console.log(error.response);
@@ -38,11 +46,31 @@ function App() {
     axios
       .post("http://localhost:8080/user/join", body, config)
       .then((response) => {
-        console.log("response.data", response.data);
-        setMode('LOGIN');
+        console.log(response.data);
+
+        setMode("LOGIN");
         setEmail("");
         setPassword("");
         setName("");
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
+
+  /* 유저 정보 받아오기 */
+  const getUser = () => {
+    axios
+      .get("http://localhost:8080/user/list")
+      .then((response) => {
+        console.log(response.data);
+
+        const _users = response.data.map((d) => ({
+          id: d.id,
+          name: d.name,
+        }));
+
+        setUsers(users.concat(_users));
       })
       .catch((error) => {
         console.log(error.response);
@@ -59,9 +87,10 @@ function App() {
     setName(event.target.value);
   };
 
-  /* 페이지 모드 변환 */
   let content,
     header = null;
+
+  /* 페이지 모드 변환 */
 
   if (mode === "LOGIN") {
     header = (
@@ -95,17 +124,20 @@ function App() {
           <input type="password" value={password} onChange={onChangePassword} />
           <br />
           <button formAction="">Login</button>
-          <button onClick={() => {
-            setMode("JOIN");
-            setEmail("");
-            setPassword("");
-            setName("");
-          }}>Join</button>
+          <button
+            onClick={() => {
+              setMode("JOIN");
+              setEmail("");
+              setPassword("");
+              setName("");
+            }}
+          >
+            Join
+          </button>
         </form>
       </div>
     );
-  }
-  else if (mode === "JOIN") {
+  } else if (mode === "JOIN") {
     header = (
       <div
         name="header"
@@ -153,17 +185,20 @@ function App() {
           />
           <br />
           <button formAction="">Join</button>
-          <button onClick={() => {
-            setMode("LOGIN");
-            setEmail("");
-            setPassword("");
-            setName("");
-          }}>Home</button>
+          <button
+            onClick={() => {
+              setMode("LOGIN");
+              setEmail("");
+              setPassword("");
+              setName("");
+            }}
+          >
+            Home
+          </button>
         </form>
       </div>
     );
-  }
-  else if (mode === 'READ') {
+  } else if (mode === "READ") {
     header = (
       <div
         name="header"
@@ -177,16 +212,51 @@ function App() {
       </div>
     );
     content = (
-      <button onClick={() => {
-        setMode("LOGIN");
-        setEmail("");
-        setPassword("");
-      }}>Home</button>
-    )
+      <>
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
+        <table>
+          <thead>
+          <tr>
+              <th>id</th>
+              <th>name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map(({ id, name }) => (
+            <tr>
+              <td>{id}</td>
+              <td>{name}</td>
+            </tr>
+          ))}
+        </tbody>
+          </table></div>
+        <br/>
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
+        <button 
+          onSubmit={onClickJoin}
+          onClick={() => {
+            setMode("LOGIN");
+            setEmail("");
+            setPassword("");
+            setUsers([]);
+          }}
+        >
+          Logout
+          </button></div>
+      </>
+    );
   }
 
   return (
-    <div>
+    <div>  
       {header}
       {content}
     </div>
