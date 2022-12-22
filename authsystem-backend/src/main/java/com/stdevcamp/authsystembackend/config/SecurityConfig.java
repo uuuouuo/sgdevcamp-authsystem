@@ -1,5 +1,6 @@
 package com.stdevcamp.authsystembackend.config;
 
+import com.stdevcamp.authsystembackend.config.jwt.JwtAuthenticationEntryPoint;
 import com.stdevcamp.authsystembackend.config.jwt.JwtAuthenticationFilter;
 import com.stdevcamp.authsystembackend.config.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +27,13 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 사용하려면 session 사용 해제
                 .and()
                 .authorizeRequests()
-                .antMatchers("/management").authenticated() // 인증 필요한 uri
+                .antMatchers("/list").authenticated() // 인증 필요한 uri
                 .anyRequest().permitAll() // 나머지 uri 접근 허용
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
                         UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 ;
 
         return http.build();
