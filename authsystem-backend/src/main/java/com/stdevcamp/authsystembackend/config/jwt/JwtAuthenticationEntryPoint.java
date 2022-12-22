@@ -21,19 +21,19 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             return;
         }
 
-        if(exception.equals(ErrorCode.NON_LOGIN.getCode())) {
+        if(exception.equals(ErrorCode.NON_LOGIN.getMessage())) {
             errorCode = ErrorCode.NON_LOGIN;
             setResponse(response, errorCode);
             return;
         }
 
-        if(exception.equals(ErrorCode.EXPIRED_TOKEN.getCode())) {
+        if(exception.equals(ErrorCode.EXPIRED_TOKEN.getMessage())) {
             errorCode = ErrorCode.EXPIRED_TOKEN;
             setResponse(response, errorCode);
             return;
         }
 
-        if(exception.equals(ErrorCode.INVALID_TOKEN.getCode())) {
+        if(exception.equals(ErrorCode.INVALID_TOKEN.getMessage())) {
             errorCode = ErrorCode.INVALID_TOKEN;
             setResponse(response, errorCode);
         }
@@ -43,8 +43,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().println("{ \"message\" : \"" + errorCode.getMessage()
-                + "\", \"code\" : \"" +  errorCode.getCode()
-                + "\", \"status\" : " + errorCode.getStatus()
+                + "\", \"status\" : " + errorCode.getHttpStatus()
                 + ", \"errors\" : [ ] }");
     }
 

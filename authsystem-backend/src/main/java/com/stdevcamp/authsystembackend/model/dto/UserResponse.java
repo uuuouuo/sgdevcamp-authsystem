@@ -5,17 +5,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class JoinRequest {
-
+public class UserResponse {
     private String id;
-    private String password;
     private String name;
 
-    public JoinRequest(String id, String password, String name) {
+    public UserResponse(String id, String name) {
         this.id = id;
-        this.password = password;
         this.name = name;
-
     }
-
 }

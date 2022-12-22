@@ -39,14 +39,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             e.printStackTrace();
             System.out.println("=========>>> Auth Fail ...");
             if(header == null) {
-                request.setAttribute("exception", ErrorCode.NON_LOGIN.getCode());
+                request.setAttribute("exception", ErrorCode.NON_LOGIN.getMessage());
                 System.out.println("=========>>> null");
             } else if(!jwtProvider.validateToken(header.replace("Bearer ", ""))) {
-                request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.getCode());
+                request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.getMessage());
                 System.out.println("=========>>> expired");
             } else {
                 e.printStackTrace();
-                request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getCode());
+                request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getMessage());
                 System.out.println("=========>>> invalid");
             }
         }

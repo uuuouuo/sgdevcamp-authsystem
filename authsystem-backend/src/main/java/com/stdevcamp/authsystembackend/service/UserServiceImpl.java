@@ -1,84 +1,106 @@
 package com.stdevcamp.authsystembackend.service;
 
 import com.stdevcamp.authsystembackend.config.jwt.JwtProvider;
+import com.stdevcamp.authsystembackend.exception.ErrorCode;
+import com.stdevcamp.authsystembackend.exception.Message;
+import com.stdevcamp.authsystembackend.exception.custom.NotFoundException;
 import com.stdevcamp.authsystembackend.model.dto.JoinRequest;
 import com.stdevcamp.authsystembackend.model.dto.LoginRequest;
 import com.stdevcamp.authsystembackend.model.dto.UserResponse;
 import com.stdevcamp.authsystembackend.model.entity.User;
 import com.stdevcamp.authsystembackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Override
     @Transactional
-    public void join(JoinRequest request) {
-        if(userRepository.findById(request.getId()) != null) {
-            
+    public Map<String, Object> join(JoinRequest request) {
+
+        if(userRepository.findById(request.getId()).isPresent()) {
+            throw  new NotFoundException(ErrorCode.DUPLICATE_RESOURCE);
         }
+
+
         String rawPassword = request.getPassword();
         String encPassword = bCryptPasswordEncoder.encode(rawPassword);
 
         User user = new User();
         user.createUser(request, encPassword);
         userRepository.save(user);
-    }
 
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", Message.USER_SAVE_SUCCESS_MESSAGE);
+
+        return result;
+    }
+    @Override
     public String login(LoginRequest request) {
 
         Optional<User> optional = userRepository.findById(request.getId());
 
-        // 나중에 수정 필요
         if (!optional.isPresent()) {
-            throw new IllegalStateException("존재하지 않은 회원입니다.");
+            throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
         }
 
         User user = optional.get();
-
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
         if(!bCryptPasswordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalStateException("비밀번호 일치하지 않습니다.");
+            throw new BadCredentialsException(ErrorCode.INPUT_PASSWORD_MISMATCH.getMessage());
         }
 
-        String jwtToken = jwtProvider.createToken(user);
-
-        return jwtToken;
+        return jwtProvider.createToken(user);
 
     }
 
-    public String refresh(String id) {
+    @Override
+    public String refresh(LoginRequest request) {
+        Optional<User> optional = userRepository.findById(request.getId());
 
-        Optional<User> optional = userRepository.findById(id);
-
-        // 나중에 수정 필요
         if (!optional.isPresent()) {
-            throw new IllegalStateException("존재하지 않은 회원입니다.");
+            throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
         }
-        String newToken = jwtProvider.createToken(optional.get());
 
-        return newToken;
+        User user = optional.get();
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
+        if(!bCryptPasswordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException(ErrorCode.INPUT_PASSWORD_MISMATCH.getMessage());
+        }
+
+        return jwtProvider.createToken(user);
     }
 
-    public List<UserResponse> findUsers() {
+    @Override
+    public Map<String, Object> findUsers() {
         List<User> userList = userRepository.findAll();
 
-        List<UserResponse> result = userList.stream()
+        List<UserResponse> userResponseList = userList.stream()
                 .map(u -> new UserResponse(u.getEmail(), u.getName()))
                 .collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", Message.USER_FIND_SUCCESS_MESSAGE);
+        result.put("response", userResponseList);
+
         return result;
     }
 }

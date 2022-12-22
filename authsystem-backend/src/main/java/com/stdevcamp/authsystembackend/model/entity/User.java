@@ -35,7 +35,7 @@ public class User {
 //    }
 
     public void createUser(JoinRequest request, String password) {
-        this.email = request.getEmail();
+        this.email = request.getId();
         this.name = request.getName();
         this.password = password;
 //        this.role = Role.USER;

@@ -1,57 +1,67 @@
 package com.stdevcamp.authsystembackend.controller;
 
 import com.stdevcamp.authsystembackend.config.jwt.JwtProperties;
+import com.stdevcamp.authsystembackend.exception.Message;
 import com.stdevcamp.authsystembackend.model.dto.JoinRequest;
 import com.stdevcamp.authsystembackend.model.dto.LoginRequest;
-import com.stdevcamp.authsystembackend.service.UserService;
+import com.stdevcamp.authsystembackend.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @PostMapping(value = "/join")
-    public void  createUser(@RequestBody JoinRequest request) {
+    public ResponseEntity<Map<String, Object>>  createUser(@RequestBody JoinRequest request) {
         System.out.println("======>>> Join Success !");
-        // 같은 이메일 있는지 확인 필요
-        userService.join(request);
+
+        return ResponseEntity.ok().body(userService.join(request));
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequest request, HttpServletResponse http) {
-        String jwtToken = userService.login(request);
+    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginRequest request, HttpServletResponse http) {
+        System.out.println(request.getId()+" "+request.getPassword());
 
+        String jwtToken = userService.login(request);
         http.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
-//        System.out.println("======>>> JWT ::: " + jwtToken);
-        return ResponseEntity.ok().body(jwtToken);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", Message.TOKEN_CREAT_SUCCESS_MESSAGE);
+
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping(value = "/refresh")
-    public ResponseEntity<String> updateToken(@RequestBody LoginRequest loginReq, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> updateToken(@RequestBody LoginRequest request, HttpServletResponse http) {
 
-        String jwtToken = userService.refresh(loginReq.getId());
+        String refresh = userService.refresh(request);
 
-        response.addHeader(JwtProperties.HEADER_STRING,
-                JwtProperties.TOKEN_PREFIX + jwtToken);
+        http.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + refresh);
 
-        return ResponseEntity.ok().body("JWT 재생성 완료");
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", Message.TOKEN_CREAT_SUCCESS_MESSAGE);
+
+        return ResponseEntity.ok().body(response);
 
     }
 
-//    @GetMapping("/management")
-//    public ResponseEntity<List<String>> getUserAll() {
-//        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
-//    }
+    @GetMapping("/list")
+    public ResponseEntity<Map<String, Object>> getUserAll() {
+        return ResponseEntity.ok().body(userService.findUsers());
+    }
 
 
 }
