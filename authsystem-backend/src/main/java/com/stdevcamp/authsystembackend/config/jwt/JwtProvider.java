@@ -19,7 +19,6 @@ import java.util.Date;
  * 해당 컴포넌트는 필터클래스에서 사전 검증을 거침
  */
 
-//@Component
 @Service
 @RequiredArgsConstructor
 public class JwtProvider {
@@ -27,7 +26,6 @@ public class JwtProvider {
     private final PrincipalDetailService principalDetailService;
     private final UserRepository userRepository;
 
-    // JWT 토큰 생성
     public String createToken(User user) {
         String jwtToken = JWT.create()
                 .withSubject("JWT토큰")
@@ -51,7 +49,6 @@ public class JwtProvider {
         return id;
     }
 
-    // 토큰의 유효성 + 만료일자 확인
     public boolean validateToken(String jwtToken) {
         DecodedJWT verify = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
                     .build().verify(jwtToken);
