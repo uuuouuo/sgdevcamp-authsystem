@@ -35,7 +35,6 @@ public class UserServiceImpl implements UserService {
     public Map<String, Object> join(JoinRequest request) {
 
         if(userRepository.findById(request.getId()).isPresent()) {
-            System.out.println("유저 정보 없음");
             throw  new NotFoundException(ErrorCode.DUPLICATE_RESOURCE);
         }
 

@@ -40,7 +40,7 @@ public class UserController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", Message.TOKEN_CREAT_SUCCESS_MESSAGE);
-        response.put("token", jwtToken);
+
         return ResponseEntity.ok().body(response);
     }
 
