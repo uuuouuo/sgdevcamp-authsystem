@@ -18,7 +18,7 @@
 ### 2. 회원가입
 ![image](https://user-images.githubusercontent.com/89640705/209167661-b70cb5a6-f9f3-45b5-bc10-446a10b23260.png)
 ### 3. 유저 리스트 조회
-![image](https://user-images.githubusercontent.com/89640705/209168030-96bcd3d7-32a0-433c-b22c-8221c63d650e.png)
+![image](https://user-images.githubusercontent.com/89640705/209168457-686f7ff7-c2b1-4970-aff4-82379a85d209.png)
 ## 질문
 - spring 예외처리
 ```java
