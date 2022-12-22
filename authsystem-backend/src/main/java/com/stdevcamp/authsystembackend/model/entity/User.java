@@ -23,22 +23,10 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private Role role;
-
-//    @Builder
-//    public User(String name, String email, String picture, Role role) {
-//        this.name = name;
-//        this.email = email;
-//        this.role = role;
-//    }
-
     public void createUser(JoinRequest request, String password) {
         this.email = request.getId();
         this.name = request.getName();
         this.password = password;
-//        this.role = Role.USER;
     }
 
 }

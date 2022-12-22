@@ -26,15 +26,11 @@ public class UserController {
 
     @PostMapping(value = "/join")
     public ResponseEntity<Map<String, Object>>  createUser(@RequestBody JoinRequest request) {
-        System.out.println("======>>> Join Success !");
-
         return ResponseEntity.ok().body(userService.join(request));
     }
 
     @PostMapping(value = "/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginRequest request, HttpServletResponse http) {
-        System.out.println(request.getId()+" "+request.getPassword());
-
         String jwtToken = userService.login(request);
         http.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
 
@@ -46,7 +42,6 @@ public class UserController {
 
     @PostMapping(value = "/refresh")
     public ResponseEntity<Map<String, Object>> updateToken(@RequestBody LoginRequest request, HttpServletResponse http) {
-
         String refresh = userService.refresh(request);
 
         http.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + refresh);

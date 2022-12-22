@@ -24,11 +24,11 @@ public class SecurityConfig {
         http.csrf().disable();
         http.httpBasic().disable();
         http.cors().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 사용하려면 session 사용 해제
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/list").authenticated() // 인증 필요한 uri
-                .anyRequest().permitAll() // 나머지 uri 접근 허용
+                .antMatchers("/list").authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
                         UsernamePasswordAuthenticationFilter.class)
@@ -39,7 +39,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 비밀번호 암호화를 위한 Encoder 설정
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

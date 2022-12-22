@@ -39,18 +39,15 @@ public class JwtProvider {
         return jwtToken;
     }
 
-    // JWT 토큰에서 사용자 정보 조회
     public Authentication getAuthentication(String jwtToken) {
         UserDetails principalDetails
                 = principalDetailService.loadUserByUsername(this.getUserId(jwtToken));
         return new UsernamePasswordAuthenticationToken(principalDetails, "", principalDetails.getAuthorities());
     }
 
-    // JWT 토큰에서 회원 정보 추출
     public String getUserId(String jwtToken) {
         String id = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET))
                 .build().verify(jwtToken).getClaim("id").asString();
-//        System.out.println("=========>>> id "+id);
         return id;
     }
 
