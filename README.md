@@ -14,11 +14,11 @@
 - MySQL
 ## 서비스 주요 기능
 ### 1. 로그인
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6db4f1cf-1bec-487c-8e1a-1abdac69485d/Untitled.png)
+![image](https://user-images.githubusercontent.com/89640705/209167581-c6bda735-97c1-4d73-af26-98e886c7dac3.png)
 ### 2. 회원가입
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/44a52889-aaf7-45c8-81e2-ad57296154a1/Untitled.png)
+![image](https://user-images.githubusercontent.com/89640705/209167661-b70cb5a6-f9f3-45b5-bc10-446a10b23260.png)
 ### 3. 유저 리스트 조회
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/39de81c4-e726-4a7c-bd66-b3313c2940da/Untitled.png)
+![image](https://user-images.githubusercontent.com/89640705/209168030-96bcd3d7-32a0-433c-b22c-8221c63d650e.png)
 ## 질문
 - spring 예외처리
 ```java
