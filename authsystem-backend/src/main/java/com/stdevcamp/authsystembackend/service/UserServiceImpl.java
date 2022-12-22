@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Map<String, Object> join(JoinRequest request) {
-
         if(userRepository.findById(request.getId()).isPresent()) {
             throw  new NotFoundException(ErrorCode.DUPLICATE_RESOURCE);
         }
@@ -53,7 +52,6 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public String login(LoginRequest request) {
-
         Optional<User> optional = userRepository.findById(request.getId());
 
         if (!optional.isPresent()) {
@@ -68,7 +66,6 @@ public class UserServiceImpl implements UserService {
         }
 
         return jwtProvider.createToken(user);
-
     }
 
     @Override
