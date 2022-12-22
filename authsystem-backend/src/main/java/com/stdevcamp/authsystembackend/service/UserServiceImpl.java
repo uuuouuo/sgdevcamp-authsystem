@@ -3,6 +3,7 @@ package com.stdevcamp.authsystembackend.service;
 import com.stdevcamp.authsystembackend.config.jwt.JwtProvider;
 import com.stdevcamp.authsystembackend.model.dto.JoinRequest;
 import com.stdevcamp.authsystembackend.model.dto.LoginRequest;
+import com.stdevcamp.authsystembackend.model.dto.UserResponse;
 import com.stdevcamp.authsystembackend.model.entity.User;
 import com.stdevcamp.authsystembackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,9 @@ public class UserService {
 
     @Transactional
     public void join(JoinRequest request) {
+        if(userRepository.findById(request.getId()) != null) {
+            
+        }
         String rawPassword = request.getPassword();
         String encPassword = bCryptPasswordEncoder.encode(rawPassword);
 
@@ -67,4 +73,12 @@ public class UserService {
 
     }
 
+    public List<UserResponse> findUsers() {
+        List<User> userList = userRepository.findAll();
+
+        List<UserResponse> result = userList.stream()
+                .map(u -> new UserResponse(u.getEmail(), u.getName()))
+                .collect(Collectors.toList());
+        return result;
+    }
 }
