@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import "./App.css";
-import { getSuggestedQuery } from "@testing-library/react";
 
 function App() {
   const [mode, setMode] = useState("LOGIN");
@@ -12,10 +11,10 @@ function App() {
   const [cookie, setCookie] = useCookies(["token"]);
   const config = { "Content-Type": "application/json" };
   const [users, setUsers] = useState([
-    {
-      id: "",
-      name: "",
-    },
+    // {
+    // id: "",
+    // name: "",
+    // },
   ]);
 
   /* 로그인 */
@@ -24,16 +23,23 @@ function App() {
 
     const body = { id: email, password: password };
 
+    if (body.email === "" || body.password === "") {
+      return;
+    }
+
     axios
       .post("http://localhost:8080/user/login", body, config)
       .then((response) => {
-        console.log("response.data", response.data);
+        console.log(response.data);
+        console.log(body.id, body.password);
+
         setCookie("token", response.data);
         setMode("READ");
         getUser();
       })
       .catch((error) => {
-        console.log(error.response);
+        console.log(error.response.data.message);
+        alert(error.response.data.message);
       });
   };
 
@@ -42,6 +48,10 @@ function App() {
     event.preventDefault();
 
     const body = { id: email, password: password, name: name };
+
+    if (body.email === "" || body.password === "" || body.name === "") {
+      return;
+    }
 
     axios
       .post("http://localhost:8080/user/join", body, config)
@@ -54,7 +64,8 @@ function App() {
         setName("");
       })
       .catch((error) => {
-        console.log(error.response);
+        console.log(error.response.data.message);
+        alert("사용중인 이메일입니다.");
       });
   };
 
@@ -65,12 +76,12 @@ function App() {
       .then((response) => {
         console.log(response.data);
 
-        const _users = response.data.map((d) => ({
+        const _users = response.data.response.map((d) => ({
           id: d.id,
           name: d.name,
         }));
 
-        setUsers(users.concat(_users));
+        setUsers(_users);
       })
       .catch((error) => {
         console.log(error.response);
@@ -93,170 +104,138 @@ function App() {
   /* 페이지 모드 변환 */
 
   if (mode === "LOGIN") {
-    header = (
-      <div
-        name="header"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        안녕하세요
-      </div>
-    );
     content = (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          // width: '100%', height: '100vh'
-        }}
-      >
-        <form
-          style={{ display: "flex", flexDirection: "column" }}
-          onSubmit={onClickLogin}
-        >
-          <label>Email </label>
-          <input type="email" value={email} onChange={onChangeEmail} />
-          <label>Password </label>
-          <input type="password" value={password} onChange={onChangePassword} />
-          <br />
-          <button formAction="">Login</button>
-          <button
-            onClick={() => {
-              setMode("JOIN");
-              setEmail("");
-              setPassword("");
-              setName("");
-            }}
-          >
-            Join
-          </button>
-        </form>
+      <div class="container" id="container">
+        <div class="form-container sign-in-container">
+          <form onSubmit={onClickLogin}>
+            <h1>Sign In</h1>
+            <input
+              type="email"
+              value={email}
+              placeholder="Email"
+              onChange={onChangeEmail}
+            />
+            <input
+              type="password"
+              value={password}
+              placeholder="Password"
+              onChange={onChangePassword}
+            />
+            <button formAction="">Sign In</button>
+            <button
+              onClick={() => {
+                setMode("JOIN");
+                setEmail("");
+                setPassword("");
+                setName("");
+              }}
+            >
+              Sign Up
+            </button>
+          </form>
+        </div>
       </div>
     );
   } else if (mode === "JOIN") {
-    header = (
-      <div
-        name="header"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        회원가입
+    content = (
+      <div class="container" id="container">
+        <div class="form-container sign-up-container">
+          <form onSubmit={onClickJoin}>
+            <h1>Sign Up</h1>
+            <input
+              type="email"
+              value={email}
+              placeholder="이메일을 입력해 주세요."
+              onChange={onChangeEmail}
+            />
+            <input
+              type="name"
+              value={name}
+              placeholder="이름을 입력해 주세요."
+              onChange={onChangeName}
+            />
+            <input
+              type="password"
+              value={password}
+              placeholder="비밀번호를 입력해 주세요."
+              onChange={onChangePassword}
+            />
+            <button formAction="">Join</button>
+            <button
+              onClick={() => {
+                setMode("LOGIN");
+                setEmail("");
+                setPassword("");
+                setName("");
+              }}
+            >
+              Home
+            </button>
+          </form>
+        </div>
       </div>
     );
+  } else if (mode === "READ") {
     content = (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <form
-          style={{ display: "flex", flexDirection: "column" }}
-          onSubmit={onClickJoin}
+      <>
+        <div class="container" id="container">
+          <h1
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            User Table
+          </h1>
+          <table class="blueone"
+          style={{
+            width: "80%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+            <thead>
+              <tr>
+                <th>id</th>
+                <th>name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(({ id, name }) => (
+                <tr>
+                  <td>{id}</td>
+                  <td>{name}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <br />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <label>Email </label>
-          <input
-            type="email"
-            value={email}
-            placeholder="이메일 입력"
-            onChange={onChangeEmail}
-          />
-          <label>Name </label>
-          <input
-            type="name"
-            value={name}
-            placeholder="이름 입력"
-            onChange={onChangeName}
-          />
-          <label>Password </label>
-          <input
-            type="password"
-            value={password}
-            placeholder="비밀번호 입력"
-            onChange={onChangePassword}
-          />
-          <br />
-          <button formAction="">Join</button>
           <button
+            onSubmit={onClickJoin}
             onClick={() => {
               setMode("LOGIN");
               setEmail("");
               setPassword("");
-              setName("");
+              setUsers([]);
             }}
           >
-            Home
+            Logout
           </button>
-        </form>
-      </div>
-    );
-  } else if (mode === "READ") {
-    header = (
-      <div
-        name="header"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        유저 관리
-      </div>
-    );
-    content = (
-      <>
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}>
-        <table>
-          <thead>
-          <tr>
-              <th>id</th>
-              <th>name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(({ id, name }) => (
-            <tr>
-              <td>{id}</td>
-              <td>{name}</td>
-            </tr>
-          ))}
-        </tbody>
-          </table></div>
-        <br/>
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}>
-        <button 
-          onSubmit={onClickJoin}
-          onClick={() => {
-            setMode("LOGIN");
-            setEmail("");
-            setPassword("");
-            setUsers([]);
-          }}
-        >
-          Logout
-          </button></div>
+        </div>
       </>
     );
   }
 
   return (
-    <div>  
+    <div>
       {header}
       {content}
     </div>
